@@ -1,0 +1,484 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UKRI Funding Scout Agent</title>
+  <style>
+    :root {
+      --bg: #eef2ff;
+      --ink: #111827;
+      --muted: #6b7280;
+      --card: #ffffff;
+      --accent: #4f46e5;
+      --accent2: #0f766e;
+      --line: #e5e7eb;
+      --warning: #92400e;
+      --warning-bg: #fffbeb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, #dbeafe 0, transparent 32%),
+        radial-gradient(circle at top right, #ccfbf1 0, transparent 28%),
+        var(--bg);
+      color: var(--ink);
+    }
+
+    header {
+      padding: 48px 24px 32px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(79, 70, 229, 0.12);
+      color: #3730a3;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1;
+      margin: 0;
+      letter-spacing: -0.055em;
+    }
+
+    .subtitle {
+      max-width: 820px;
+      margin: 18px auto 0;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto 56px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin: 16px 0 8px;
+      font-size: 14px;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 15px;
+      font-size: 15px;
+      background: white;
+      outline: none;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 16px;
+      padding: 15px 18px;
+      margin-top: 18px;
+      font-size: 16px;
+      font-weight: 800;
+      color: white;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      box-shadow: 0 12px 26px rgba(79, 70, 229, 0.28);
+    }
+
+    button:disabled {
+      opacity: 0.62;
+      cursor: not-allowed;
+    }
+
+    .status {
+      display: none;
+      margin-top: 14px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .warning {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid #fde68a;
+      padding: 13px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 14px;
+    }
+
+    .output-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .output-head h2 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -0.03em;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0 22px;
+    }
+
+    .pill {
+      border-radius: 999px;
+      background: #ecfeff;
+      color: #155e75;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .match {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 14px;
+      background: white;
+    }
+
+    .match-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .match h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    .match h3 a {
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .match h3 a:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    .score {
+      min-width: 82px;
+      text-align: center;
+      border-radius: 18px;
+      padding: 12px;
+      background: #f0fdf4;
+      color: #166534;
+      font-weight: 900;
+    }
+
+    .score small {
+      display: block;
+      font-size: 11px;
+      color: #15803d;
+      margin-top: 2px;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0;
+      color: #374151;
+      font-size: 13px;
+    }
+
+    .meta div {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid #eef2f7;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin: 14px 0 6px;
+    }
+
+    .copy {
+      color: #374151;
+      line-height: 1.55;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 70px 20px;
+      border: 2px dashed #c7d2fe;
+      border-radius: 24px;
+      background: rgba(255,255,255,.65);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 0 24px 38px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .meta {
+        grid-template-columns: 1fr;
+      }
+
+      .match-top {
+        flex-direction: column;
+      }
+
+      .score {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge">AI Agent Prototype</div>
+    <h1>UKRI Funding Scout Agent</h1>
+    <p class="subtitle">
+      Paste a public academic profile URL, or paste profile text. The agent extracts research themes,
+      searches UKRI Funding Finder, ranks opportunities, and proposes a bid angle.
+    </p>
+  </header>
+
+  <main class="grid">
+    <section class="card">
+      <label for="backendUrl">Backend API URL</label>
+      <input id="backendUrl" placeholder="Leave blank if running on the same server, or enter your Render URL" />
+      <p class="hint">For Render deployment, leave this blank. For GitHub Pages front end, enter your Render backend URL, for example https://your-agent.onrender.com.</p>
+
+      <label for="profileUrl">Profile URL</label>
+      <input id="profileUrl" placeholder="https://www.birmingham.ac.uk/staff/profiles/..." />
+
+      <label for="profileText">Or paste profile text</label>
+      <textarea id="profileText" placeholder="Paste biography, research interests, publications, grants, impact work or CV summary. This is useful when LinkedIn blocks automated access."></textarea>
+
+      <label for="extraKeywords">Extra keywords</label>
+      <input id="extraKeywords" placeholder="AI, FinTech, ESG, digital finance, policy, health data" />
+
+      <button id="runBtn" onclick="runAgent()">Find UKRI Opportunities</button>
+
+      <div id="status" class="status"></div>
+
+      <div class="warning">
+        LinkedIn often blocks automated scraping. For LinkedIn, paste the profile text instead.
+        Always check the official UKRI page before applying because eligibility and deadlines can change.
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="output-head">
+        <div>
+          <h2>Recommended opportunities</h2>
+          <p class="hint">Matches are ranked by profile similarity, keyword overlap and call relevance.</p>
+        </div>
+      </div>
+
+      <div id="keywords"></div>
+      <div id="results" class="empty">
+        Enter a profile URL or profile text, then run the agent.
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Prototype for research funding discovery. Use responsibly and verify all call details on UKRI.
+  </footer>
+
+  <script>
+    function getApiBase() {
+      const entered = document.getElementById("backendUrl").value.trim();
+      if (entered) return entered.replace(/\/$/, "");
+      return window.location.origin;
+    }
+
+    function setStatus(message, show = true) {
+      const el = document.getElementById("status");
+      el.style.display = show ? "block" : "none";
+      el.textContent = message || "";
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function runAgent() {
+      const runBtn = document.getElementById("runBtn");
+      const results = document.getElementById("results");
+      const keywords = document.getElementById("keywords");
+
+      const payload = {
+        profile_url: document.getElementById("profileUrl").value.trim() || null,
+        profile_text: document.getElementById("profileText").value.trim() || null,
+        extra_keywords: document.getElementById("extraKeywords").value.trim() || null,
+        max_results: 10
+      };
+
+      if (!payload.profile_url && !payload.profile_text) {
+        alert("Please enter a profile URL or paste profile text.");
+        return;
+      }
+
+      runBtn.disabled = true;
+      results.className = "empty";
+      results.innerHTML = "Searching UKRI and ranking matches...";
+      keywords.innerHTML = "";
+      setStatus("Agent is extracting profile themes and searching UKRI Funding Finder.");
+
+      try {
+        const response = await fetch(`${getApiBase()}/api/match`, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.detail || "The agent could not complete the search.");
+        }
+
+        renderResults(data);
+        setStatus(data.message || "Search completed.");
+      } catch (err) {
+        results.className = "empty";
+        results.innerHTML = `<strong>Error:</strong> ${escapeHtml(err.message)}`;
+        setStatus("Search failed. Check the backend URL and try pasted profile text if the profile page blocks scraping.");
+      } finally {
+        runBtn.disabled = false;
+      }
+    }
+
+    function renderResults(data) {
+      const keywords = document.getElementById("keywords");
+      const results = document.getElementById("results");
+
+      const kws = data.profile_keywords || [];
+      keywords.innerHTML = `
+        <div class="section-title">Extracted profile themes</div>
+        <div class="pill-row">
+          ${kws.map(k => `<span class="pill">${escapeHtml(k)}</span>`).join("")}
+        </div>
+      `;
+
+      const matches = data.matches || [];
+      if (!matches.length) {
+        results.className = "empty";
+        results.innerHTML = escapeHtml(data.message || "No matching opportunities found.");
+        return;
+      }
+
+      results.className = "";
+      results.innerHTML = matches.map(item => `
+        <article class="match">
+          <div class="match-top">
+            <div>
+              <h3><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener">${escapeHtml(item.title)}</a></h3>
+              <p class="copy">${escapeHtml(item.summary || "").slice(0, 300)}...</p>
+            </div>
+            <div class="score">${escapeHtml(item.match_score)}<small>match</small></div>
+          </div>
+
+          <div class="meta">
+            <div><strong>Status:</strong><br>${escapeHtml(item.status || "Check UKRI page")}</div>
+            <div><strong>Funders:</strong><br>${escapeHtml(item.funders || "Check UKRI page")}</div>
+            <div><strong>Award:</strong><br>${escapeHtml(item.award || "Check UKRI page")}</div>
+            <div><strong>Closing date:</strong><br>${escapeHtml(item.closing_date || "Check UKRI page")}</div>
+          </div>
+
+          <div class="section-title">Why this matches</div>
+          <p class="copy">${escapeHtml(item.why_match)}</p>
+
+          <div class="section-title">Bid angle</div>
+          <p class="copy">${escapeHtml(item.bid_angle)}</p>
+
+          <div class="section-title">Matched terms</div>
+          <div class="pill-row">
+            ${(item.matched_terms || []).map(k => `<span class="pill">${escapeHtml(k)}</span>`).join("")}
+          </div>
+        </article>
+      `).join("");
+    }
+  </script>
+</body>
+</html>
