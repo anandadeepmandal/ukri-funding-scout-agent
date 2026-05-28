@@ -67,11 +67,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
 
 @app.get("/")
 def home():
-    return FileResponse("docs/index.html")
-
+    index_file = BASE_DIR / "index.html"
+    if not index_file.exists():
+        raise HTTPException(
+            status_code=500,
+            detail=f"Frontend file not found at {index_file}"
+        )
+    return FileResponse(index_file)
 
 @app.get("/health")
 def health():
